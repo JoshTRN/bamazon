@@ -11,6 +11,7 @@ product_name VARCHAR(45) NULL,
 department_name VARCHAR(20) NULL,
 price DECIMAL (10,2) NOT NULL,
 quantity INT(10),
+product_sales DECIMAL (10,2) NULL,
 PRIMARY KEY (id)
 );
 
@@ -44,4 +45,31 @@ VALUE ("Silverware Set", "kitchen", 65.77, 19);
 INSERT INTO products (product_name, department_name, price, quantity)
 VALUE ("Wooden Desk", "furniture", 89.99, 2);
 
-SELECT product_name, quantity FROM bamazon.products WHERE quantity>4;
+
+CREATE TABLE departments (
+department_id INT NOT NULL AUTO_INCREMENT,
+department_name VARCHAR(45) NULL,
+overhead_costs DECIMAL(10,2) NULL,
+PRIMARY KEY (department_id)
+);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("accessories", 10.00);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("electronics", 10.00);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("kitchen", 10.00);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("furniture", 10.00);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("clothing", 10.00);
+
+INSERT INTO departments (department_name, overhead_cost)
+VALUE ("hygiene", 10.00);
+
+
+SELECT * FROM bamazon.departments

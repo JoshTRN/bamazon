@@ -47,7 +47,7 @@ function selectID() {
     inquirer.prompt([
         {
             type: 'list',
-            message: "Select the ID # of the product you'd like to bid on:",
+            message: "Select the ID # of the product you'd like to purchase:",
             choices: IDList,
             name: 'choice'
         }, {
@@ -59,25 +59,36 @@ function selectID() {
             }
         }
     ]).then(function(res) {
+
         var id = res.choice;
         var quantity = parseInt(res.quantity);
-        console.log(typeof quantity)
 
-        connection.query('SELECT price, quantity FROM bamazon.products WHERE ?', {
+        connection.query('SELECT product_name, price, quantity, product_sales FROM bamazon.products WHERE ?', {
             id: id
         }, function(err, res) {
             if (err) throw err;
 
-            if (res.quantity > quantity) {
-                connection.query('UPDATE products SET ? WHERE ?', {
-                    quantity: res.quantity - quantity
+            var name = res[0].product_name;
+            var price = res[0].price * quantity;
+            var sales = res[0].product_sales;
+
+            if (res[0].quantity >= quantity) {
+
+                connection.query('UPDATE products SET ? WHERE ?',[
+                 {
+                    quantity: res[0].quantity - quantity,
+                    product_sales: sales + price
                 }, {
                     id: id
-                }, function(err) {
-                    if (err) throw err;
-                    
+                }], function(err) {
+
+                    if (err) throw err.message;
+
+                    console.log("You have purchased " + quantity + ' ' + name +'\nYour total cost is: $' + price);
 
                 })
+            } else {
+                console.log('Insufficient quantity!')
             }
             connection.end();
 
