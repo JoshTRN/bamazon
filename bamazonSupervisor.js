@@ -1,8 +1,8 @@
-var inquirer = require('inquirer');
-var mysql = require('mysql');
-var Table = require('tty-table')('automattic-cli-table');
+const inquirer = require('inquirer');
+const mysql = require('mysql');
+const Table = require('tty-table')('automattic-cli-table');
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
 
@@ -20,7 +20,7 @@ inquirer.prompt([
         name: 'choice'
 
     }
-]).then(function (res) {
+]).then((res) => {
     switch (res.choice) {
         case 'View Product Sales by Department':
             viewProductSalesByDepartment();
@@ -33,22 +33,22 @@ inquirer.prompt([
 
 function viewProductSalesByDepartment() {
 
-    var headList = ['department_id', 'department_name', 'overhead_costs', 'product_sales', 'total_profit'];
+    const head = ['department_id', 'department_name', 'overhead_costs', 'product_sales', 'total_profit'];
 
-    connection.query("SELECT  departments.department_id, departments.department_name, departments.overhead_costs, SUM(products.product_sales) AS product_sales, (SUM(products.product_sales) - overhead_costs) AS total_profit FROM departments LEFT JOIN bamazon.products ON departments.department_name = products.department_name GROUP BY department_name, department_id ORDER BY department_id;", function (err, res) {
-        if (err) throw err;
-        var table = new Table({
-                head: headList
-            });
+    connection.query(`
+        SELECT  departments.department_id, departments.department_name, departments.overhead_costs, 
+        SUM(products.product_sales) AS product_sales, 
+        (SUM(products.product_sales) - overhead_costs) AS total_profit FROM departments 
+        LEFT JOIN bamazon.products ON departments.department_name = products.department_name 
+        GROUP BY department_name, department_id ORDER BY department_id;
+    `, (err, res) => {
+            if (err) throw err;
+            const table = new Table({ head });
 
-        for (var i = 0; i < res.length; i++) {
-            var itemList = []
-            itemList.push(res[i].department_id, res[i].department_name, res[i]. overhead_costs, res[i].product_sales, res[i].total_profit);
-            table.push(itemList);
-        }
+            res.forEach(result => table.push([result.department_id, resul.department_name, result.overhead_costs, result.product_sales, result.total_profit]))
+
             console.log(table.toString());
             connection.end();
-
     });
 }
 
@@ -63,12 +63,12 @@ function createNewDepartment() {
             message: 'What is the overhead cost?',
             name: 'overhead',
         }
-    ]).then(function (res) {
+    ]).then((res) => {
         connection.query('INSERT INTO bamazon.departments SET ?',
             {
                 department_name: res.department,
                 overhead_costs: res.overhead
-            }, function (err) {
+            }, (err) => {
                 if (err) throw err;
 
                 console.log('Department added');
