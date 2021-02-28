@@ -84,7 +84,7 @@ function addNewProduct() {
             message: "How Many are you adding to inventory?",
             name: 'quantity'
         },
-    ]).then(function (res) {
+    ]).then((res) => {
         connection.query("INSERT INTO products SET ?",
         {
           product_name:res.product_name,
